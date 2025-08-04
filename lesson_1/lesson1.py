@@ -42,7 +42,7 @@ sc.pp.log1p(adata)
 # identify highly-variable genes
 sc.pp.highly_variable_genes(adata, min_mean=0.0125,
                             max_mean=3, min_disp=0.5)
-adata = adata[:, adata.var.highly-variable]
+adata = adata[:, adata.var.highly_variable]
 
 # scale each gene to unit variance and zero mean, clip extreme values to +- 10
 sc.pp.scale(adata, max_value=10)
@@ -58,3 +58,20 @@ sc.tl.umap(adata)
 sc.tl.leiden(adata, resolution=0.5)
 sc.pl.umap(adata, color=['leiden'], title='Leiden Clustering')
 
+sc.tl.rank_genes_groups(adata, 'leiden', method='t-test')
+sc.pl.rank_genes_groups(adata, n_genes=20, sharey=False)
+
+# manually annotate clusters (using canonical markers)
+cluster_annotations = {
+    '0': 'CD4 T cells',
+    '1': 'CD14+ Monocytes',
+    '2': 'B cells',
+    '3': 'CD8 T cells',
+    '4': 'NK cells',
+    '5': 'FCGR3A+ Monocytes',
+    '6': 'Dendritic cells',
+    '7': 'Megakaryocytes', # trailing comma good practice
+}
+
+adata.obs['cell_type'] = adata.obs['leiden'].map(cluster_annotations)
+sc.pl.umap(adata, color = ['cell_type'], title = 'Annotated Cell Types')
