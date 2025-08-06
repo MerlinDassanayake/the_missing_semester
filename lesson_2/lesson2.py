@@ -53,3 +53,10 @@ plt.xlabel("Moran's I")
 plt.title(f"Top {top_n} Genes by Spatial Autocorrelation")
 plt.tight_layout()
 plt.show()
+
+# Find instances where ligand is expressed in one cluster and its receptor in another
+sq.gr.ligrec(adata, n_perms=100, cluster_key='leiden', use_raw=False) # n_perms uses 100 permutations, basically random chance or not?
+
+# Plot results
+sq.pl.ligrec(adata, cluster_key='leiden', means_range=(0.5,1), figsize=(8, 8))
+# Omnipathdb error 'too many 500 error responses'
